@@ -8,22 +8,35 @@ enemy = {
     "lives": 3,
     "position": 6
 }
-inventory = ["Obvaz"] # inventář hráče
-invent_state = [2] # zbylý počet použití odpovídajícího předmětu v inventáři
+inventory = ["Obvaz","Gumová kačenka"] # inventář hráče
+invent_state = [2,2] # zbylý počet použití odpovídajícího předmětu v inventáři
 player = {
     "lives": 5,
     "position": 0
 }
 fight = 0
+fight2 = 1
+noise = 0
 trefa = ("Vedle!","Trefa!")
 while True:
-    while fight:
+    decision = ""
+    print(inventory)
+    print(player)
+    
+    decision = input(("Zadej svoji akci (kontrola inventáře se nepočítá jako akce): ","Jsi v boji, útoč nebo uteč. Pro detailní kontrolu inventáře napiš 'Inventory'")[fight])
+    if decision.lower() == "inventory": # kontrola inventáře
+        ref_thing = input("Zadejte věc z inventáře, které počet chcete znát: ")
+        if ref_thing in inventory:
+            print(f"{ref_thing} lze použít ještě {invent_state[inventory.index(ref_thing)]}x")
+        else: print("Tato věc se nenachází ve vašem inventáři.")
+        ref_thing = "Nichts"
+        decision = input(("Zadej svoji akci: ","Jsi v boji. Útoč, nebo uteč.")[fight])
+    if fight:
         if player["lives"] == 0:
             print("Jsi mrtvý.")
             break
         else:
-            decision = input("Jsi v boji. Zaútoč, nebo uteč.").lower()
-            if decision == "útoč":
+            if decision.lower() == "útoč":
                 if input("Čím zaútočíš?").lower() == "pistole" and "Pistole" in inventory:
                     live_change = randint(0,1)
                     enemy["lives"] += live_change
@@ -60,9 +73,7 @@ while True:
                         player["position"] = next_room
                         break
                     else: print(f"Z místnosti {player['position']} se nelze dostat do místnosti {next_room}")
-    print("Možné akce:",possibilities)
-    decision = input("Zadej svoji akci: ")
-    if decision == "Pohyb": # přesun mezi místnostmi
+    elif decision == "Pohyb": # přesun mezi místnostmi
         print("\nNacházíš se v místnosti č.",player["position"])
         doors = ""
         for r in rooms_doors[player["position"]]:
@@ -86,16 +97,11 @@ while True:
             else:
                 inventory.append(rooms_visit[player["position"]])
                 invent_state.append(randint(2,4))
+            print("Zvedl jsi",rooms_visit[player["position"]].lower())
             rooms_visit[player["position"]] = "Nic"
         else:
             print("Nic zde není k sebrání.")
-    elif decision == "Inventory": # kontrola inventáře
-        print(inventory)
-        ref_thing = input("Zadejte věc z inventáře, které počet chcete znát: ")
-        if ref_thing in inventory:
-            print(f"{ref_thing} lze použít ještě {invent_state[inventory.index(ref_thing)]}x")
-        else: print("Tato věc se nenachází ve vašem inventáři.")
-        ref_thing = "Nichts"
+    
     elif decision == "Use":# používání předmětů
         ref_thing = input("Kterou věc z inventáře chcete použít? ")
         if ref_thing in inventory:
@@ -116,6 +122,7 @@ while True:
                 if action == "Zmáčknout":
                     if enemy["position"] in rooms_doors[player["position"]]:
                         print("Mimo kačenky uslyšels nějaký zvuk.")
+                        noise = 1 # pro enemyho
                     else: print("Písk!")
                 elif action == "Hodit":
                     action = input("Kam chceš kačenku hodit? (o zeď, do vzduchu, do vedlejší místnosti) ")
@@ -138,10 +145,37 @@ while True:
                 inventory.remove(ref_thing)
             ref_index = 0
         ref_thing = "Nichts"
-    elif decision == "Player": # kontrola statů hráče
-        print(player)
-    print("--------------------------------------------------------")
+    print("--------------------------------------------------------",print(fight,fight2,noise,enemy["position"],enemy["lives"]))
     # enemyho akce
+    # pravidla pohybu: 1) enemy se pohne o jedno pole v oblasti 3-6; 2) v boji se nehne; 3) při zapískání GK se 1. kolo nehne, 2. jde na místo pískání; 4) pokud enemy vleze sám do boje mimo účinky GK, randint rozhoduje, kdo útočí první
+    if noise == 1: # GK píská a player je v sousední roomce
+        # do nothing
+        noise = 2
+        direction = player["position"]
+    elif noise == 2:
+        enemy["position"] = direction
+        noise = 0
+    else:
+        if not fight:
+            posi = list(rooms_doors[enemy["position"]])
+            for block in range(5):
+                if block in posi:
+                    posi.remove(block)
+            enemy["position"] = posi[randint(0,len(posi)-1)]
+            fight = int(not enemy["position"]-player["position"])
+        if fight: fight2 = randint(0,1)
+        if fight and fight2:
+            if enemy["lives"] > 1 and randint(0,1):
+                player["lives"] += -1
+            elif enemy["lives"] == 1 and not randint(0,2):
+                player["lives"] += -1 # bezpečnější, ale méně efektivní útok
+            elif enemy["lives"] == 1 and not live_change: # když enemy životy = 1 a útok pistolí byl nepovedený, enemy uteče
+                enemy["position"] = randint(0,len(rooms_doors[player["position"]])-1)
+                print("Nepřítel utekl do místnosti",enemy["position"])
+                fight = 0
+            enemy["lives"] += -randint(0,1+(int((enemy["lives"]-1)/enemy["lives"] + 0.9))) # pro životy = 1 -> randint(0,1); pro živ. = 2+ -> randint(0,2)
+    fight2 = 1
+    print(fight,fight2,noise,enemy["position"],enemy["lives"])
+    print("--------------------------------------------------------")
 var_end = ""
-while not var_end:
-    var_end = input("Zadej cokoli pro ukončení hry")
+input("Enter pro ukončení hry")
