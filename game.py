@@ -1,4 +1,4 @@
-from random import randint
+from random import choice, randint
 # startovní nastavení
 possibilities = ("Pohyb","Zvedni","Útoč","Uteč")
 rooms_doors = ((1,2,3,4),(0,2,4,5),(0,1,3),(0,2,4,6),(0,1,3,5,6),(1,4,6),(3,4,5)) # možnosti přesunu v místnostech
@@ -31,6 +31,8 @@ while True:
         else: print("Tato věc se nenachází ve vašem inventáři.")
         ref_thing = "Nichts"
         decision = input(("Zadej svoji akci: ","Jsi v boji. Útoč, nebo uteč.")[fight])
+    elif decision.lower() == "konec":
+        break
     if fight:
         if player["lives"] == 0:
             print("Jsi mrtvý.")
@@ -73,6 +75,7 @@ while True:
                         player["position"] = next_room
                         break
                     else: print(f"Z místnosti {player['position']} se nelze dostat do místnosti {next_room}")
+                fight = 0
     elif decision == "Pohyb": # přesun mezi místnostmi
         print("\nNacházíš se v místnosti č.",player["position"])
         doors = ""
@@ -86,6 +89,9 @@ while True:
                 rooms_visit[next_room] = things[randint(2,4)]
                 # inventory.append(things[randint(2,4)])
                 print("V místnosti jsi našel:",rooms_visit[next_room])
+            if player["position"] == enemy["position"]:
+                fight = 1
+                fight2 = randint(0,1)
         else: print(f"Z místnosti {player['position']} se nelze dostat do místnosti {next_room}")
     # inventář a sbírání předmětů
     elif decision == "Konec": # ukončení hry
@@ -138,8 +144,9 @@ while True:
                                 print("Ve vedlejší mísnosti byl nepřítel, kterého jsi přilákal sem. Dobrá práce! Teď víš, kde je! Tady...")
                                 enemy["position"] = player["position"]
                                 fight = 1
+                            else:
+                                print("Nic se nestalo.")
                             invent_state[ref_index] += -1
-                            print("Nic se nestalo.")
             if invent_state[ref_index] == 0:
                 invent_state.remove(invent_state[ref_index])
                 inventory.remove(ref_thing)
@@ -155,15 +162,16 @@ while True:
     elif noise == 2:
         enemy["position"] = direction
         noise = 0
+        fight = 1
     else:
         if not fight:
             posi = list(rooms_doors[enemy["position"]])
-            for block in range(5):
+            for block in range(3):
                 if block in posi:
                     posi.remove(block)
-            enemy["position"] = posi[randint(0,len(posi)-1)]
+            enemy["position"] = choice(posi) #posi[randint(0,len(posi)-1)]
             fight = int(not enemy["position"]-player["position"])
-        if fight: fight2 = randint(0,1)
+            if fight: fight2 = randint(0,1)
         if fight and fight2:
             if enemy["lives"] > 1 and randint(0,1):
                 player["lives"] += -1
