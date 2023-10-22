@@ -1,9 +1,9 @@
 from random import choice, randint
 # příběh
-print("Sešel jsem žebříkem dolů, do ředitelské místnosti. Tady by měly být ty dokumenty. Vynález zkázy, ano, už jej vynalezli. Zase. Musím zjistit, jak je sestrojen, abychom jej mohli deaktivovat.")
+print("\nSešel jsem žebříkem dolů, do ředitelské místnosti. Tady by měly být ty dokumenty. Vynález zkázy, ano, už jej vynalezli. Zase. Musím zjistit, jak je sestrojen, abychom jej mohli deaktivovat.")
 print("Ou. Moje prohledávání té opuštěné základny je u konce. Ne že by zrovna začalo. Šel jsem do centrální místnosti, abych našel ty dokumenty a ono už na mě přišli.")
 print("Jak se ale dívám, ty dokumenty tu stejně nejsou. Ne, že by na tom teď zrovna záleželo.")
-print("Aaaaaaaa elektřina nejde. Pochopitelně někdo nechce, abych mu utekl. Naštěstí mám baterku. Žebřík nahoru už koukám taky vede jen do stropu... budu muset jít východem. A tam jsou vojáci, co mě chtějí dostat.")
+print("A právě vypnuli elektřinu. Pochopitelně někdo nechce, abych mu utekl. Naštěstí mám baterku. Žebřík nahoru už koukám taky vede jen do stropu... budu mpoužítt jít východem. A tam jsou vojáci, co mě chtějí dostat.")
 print("\n----------------------------------------------------------------------------------------------\n")
 print("Všude je tma, musíš si svítit baterkou. Momentálně je nabitá na 100 %, ale po každém kole se o čtvrtinu vybije. Nabít ji lze jen tam, kde je elektřina a nabíječka, tedy pouze v místnosti 4.")
 print("Pozor! Místnosti 3-6 jsou osvětlené a chodí zde voják. Sice jen jeden, ale pokaždé, když zemře, přijde další, protože se nikdo v místnosti 6 neohlásil na stráži.")
@@ -21,8 +21,8 @@ enemy = {
     "position": 6,
     "key_holder": randint(1,3)
 }
-inventory = ["Obvaz","Gumová kačenka"] # inventář hráče
-invent_state = [2,2] # zbylý počet použití odpovídajícího předmětu v inventáři
+inventory = ["Obvaz"] # inventář hráče
+invent_state = [2] # zbylý počet použití odpovídajícího předmětu v inventáři
 player = {
     "lives": 5,
     "position": 0,
@@ -43,25 +43,28 @@ while True:
     print(player)
     if player["energy"] == 1:
         print("Došla ti už skoro v baterce energie. Musíš ji okamžitě nabít, jinak se ti vybije úplně.".capitalize())
-    while not decision.lower() in {"inventory","use","zvedni","pohyb","útoč","uteč","konec","odemkni","dobít"}:
+    while not decision.lower() in {"inventory","použít","zvedni","pohyb","útoč","uteč","konec","odemkni","dobít"}:
         decision = input(("Zadej svoji akci (kontrola inventáře se nepočítá jako akce): ","Jsi v boji, útoč nebo uteč. Pro detailní kontrolu inventáře napiš 'Inventory'")[fight])
     if decision.lower() == "inventory": # kontrola inventáře
         ref_thing = input("Zadejte věc z inventáře, které počet chcete znát: ")
-        if ref_thing in inventory:
-            print(f"{ref_thing} lze použít ještě {invent_state[inventory.index(ref_thing)]}x")
+        copy_inv = []
+        for item in inventory:
+            copy_inv.append(item.lower())
+        if ref_thing in copy_inv:
+            print(f"{ref_thing} lze použít ještě {invent_state[copy_inv.index(ref_thing)]}x")
         else: print("Tato věc se nenachází ve vašem inventáři.")
         ref_thing = "Nichts"
         decision = ""
-        while not decision.lower() in {"inventory","use","zvedni","pohyb","útoč","uteč","konec","odemkni","dobít","testing"}:
+        while not decision.lower() in {"inventory","použít","zvedni","pohyb","útoč","uteč","konec","odemkni","dobít","testing"}:
             decision = input(("Zadej svoji akci: ","Jsi v boji. Útoč, nebo uteč.")[fight])
     elif decision.lower() == "konec":
         break
     if fight:
         done = 0
         if decision.lower() == "útoč":
-            if input("Čím zaútočíš?").lower() == "pistole" and "Pistole" in inventory:
+            if input("Čím zaútočíš? ").lower() == "pistole" and "Pistole" in inventory:
                 live_change = randint(0,1)
-                enemy["lives"] += live_change
+                enemy["lives"] += -live_change
                 print("Bang!",trefa[live_change])
                 # stav pistole
                 ref_index = inventory.index("Pistole")
@@ -72,7 +75,7 @@ while True:
                 ref_index = 0
             else:
                 print("Zaútočil jsi pěstmi, protože nemáš pistoli nebo jsi nezadal 'pistole'! Ne zrovna efektivní zbraň...")
-                print("Oba přijdete o život. Ty možná o dva.")
+                print("Oba se navzáje poraníte.")
                 player["lives"] += -randint(1,2)
                 enemy["lives"] += -1
                 live_change = 1
@@ -105,7 +108,7 @@ while True:
                     break
                 else: print(f"Z místnosti {player['position']} se nelze dostat do místnosti {next_room}")
             fight = 0
-    elif decision == "Pohyb": # přesun mezi místnostmi
+    elif decision.lower() == "pohyb": # přesun mezi místnostmi
         print("\nNacházíš se v místnosti č.",player["position"])
         doors = ""
         for r in rooms_doors[player["position"]]:
@@ -125,13 +128,13 @@ while True:
                 fight2 = randint(0,1)
             if player["position"] == safe_position:
                 print("V této místnosti jsi našel těžkou ocelovou krabičku s dvířki a otvorem pro klíč, jinak známou jako safe. Tam musí být ta mapa!")
-        elif exit_position in rooms_doors[player["position"]] and player["unlocked_safe"] and next_room == 7:
+        elif exit_position == player["position"] and player["unlocked_safe"] and next_room == 7:
             player["position"] = 7
         else: print(f"Z místnosti {player['position']} se nelze dostat do místnosti {next_room}")
     # inventář a sbírání předmětů
-    elif decision == "Konec": # ukončení hry
+    elif decision.lower() == "konec": # ukončení hry
         break
-    elif decision == "Zvedni": # zvednutí předmětu
+    elif decision.lower() == "zvedni": # zvednutí předmětu
         if rooms_visit[player["position"]] in things:
             if rooms_visit[player["position"]] in inventory:
                 invent_state[inventory.index(rooms_visit[player["position"]])] += randint(2,4)
@@ -142,7 +145,7 @@ while True:
             rooms_visit[player["position"]] = "Nic"
         else:
             print("Nic zde není k sebrání.")
-    elif player["position"] == safe_position and decision.lower() == "odemkni":
+    elif player["position"] == safe_position and decision.lower() == "odemkni" and not player["unlocked_safe"]:
         print("Odemknul jsi safe. Našel jsi v něm mapu základny a ověřovací kartu pro vojáka.")
         print("Ověřovací karta pro vojáka slouží k prokázání vojákovy přítomnosti na stráži.")
         print("Východ se nachází v mísnosti č.",exit_position)
@@ -159,55 +162,61 @@ while True:
             invent_state.append(1)
         else:
             player["energy"] += 3 #testing#
-    elif decision == "Use":# používání předmětů
-        ref_thing = input("Kterou věc z inventáře chcete použít? ")
-        if ref_thing in inventory:
-            ref_index = inventory.index(ref_thing)
-            if ref_thing == "Obvaz": # Obvaz
-                player["lives"] += 1
+    elif decision.lower() == "použít":# používání předmětů
+        ref_thing = "Nichts"
+        while not ref_thing in inventory:
+            ref_thing = input("Kterou věc z inventáře chcete použít? ")
+        ref_index = inventory.index(ref_thing)
+        if ref_thing.lower() == "Obvaz": # Obvaz
+            player["lives"] += 1
+            invent_state[ref_index] += -1
+            print("Obvázal ses. +1 život")
+        elif ref_thing.lower() == "Pistole":
+            if input("Pistolí lze střílet pouze na živé objekty. Momentálně nikoho živého nevidíš. Opravdu chceš pistoli použít? ") == "Ano":
+                player["lives"] += -2
                 invent_state[ref_index] += -1
-                print("Obvázal ses. +1 život")
-            elif ref_thing == "Pistole":
-                if input("Pistolí lze střílet pouze na živé objekty. Momentálně nikoho živého nevidíš. Opravdu chceš pistoli použít?") == "Ano":
-                    player["lives"] += -2
-                    invent_state[ref_index] += -1
-                    print("Střelil ses do ruky. Deset z deseti doktorů nedoporučuje. A teď ani ty. -2 životy")
-            elif ref_thing == "Gumová kačenka": # Aktivity s gumovou kačenkou
-                action = ""
-                while not (action in {"Zmáčknout","Hodit"}):
-                    action = input("Vyberte akci: Zmáčknout, Hodit ")
-                if action == "Zmáčknout":
-                    if enemy["position"] in rooms_doors[player["position"]]:
-                        print("Mimo kačenky uslyšels nějaký zvuk.")
-                        noise = 1 # pro enemyho
-                    else: print("Písk!")
-                elif action == "Hodit":
-                    action = input("Kam chceš kačenku hodit? (o zeď, do vzduchu, do vedlejší místnosti) ")
-                    if action.lower() in {"o zeď","do vzduchu","do vedlejší místnosti"}:
-                        if not (action.lower() == "do vedlejší místnosti"):
-                            if not (randint(0,100) == 50):
-                                print("Kačenku jsi hodil a zase chytil! Dobrá práce!")
-                            else:
-                                print("Kačenku jsi nechytil a spadla ti na hlavu. -1 život")
-                                player["lives"] += -1
+                print("Střelil ses do ruky. Deset z deseti doktorů nedoporučuje. A teď ani ty. -2 životy")
+        elif ref_thing.lower() == "Gumová kačenka": # Aktivity s gumovou kačenkou
+            action = ""
+            while not action in {"Zmáčknout","Hodit"}:
+                action = input("Vyberte akci: Zmáčknout, Hodit ")
+            if action == "Zmáčknout":
+                if enemy["position"] in rooms_doors[player["position"]]:
+                    print("Mimo kačenky uslyšels nějaký zvuk.")
+                    noise = 1 # pro enemyho
+                else: print("Písk!")
+            elif action == "Hodit":
+                action = input("Kam chceš kačenku hodit? (o zeď, do vzduchu, do vedlejší místnosti) ")
+                if action.lower() in {"o zeď","do vzduchu","do vedlejší místnosti"}:
+                    if not (action.lower() == "do vedlejší místnosti"):
+                        if not (randint(0,100) == 50):
+                            print("Kačenku jsi hodil a zase chytil! Dobrá práce!")
                         else:
-                            if int(input(f"Do které místnosti chceš kačenku hodit? Možnosti: {rooms_doors[player['position']]}")) == enemy["position"]:
-                                print("Ve vedlejší mísnosti byl nepřítel, kterého jsi přilákal sem. Dobrá práce! Teď víš, kde je! Tady...")
-                                enemy["position"] = player["position"]
-                                fight = 1
-                            else:
-                                print("Nic se nestalo.")
-                            invent_state[ref_index] += -1
+                            print("Kačenku jsi nechytil a spadla ti na hlavu. -1 život")
+                            player["lives"] += -1
+                    else:
+                        if int(input(f"Do které místnosti chceš kačenku hodit? Možnosti: {rooms_doors[player['position']]}")) == enemy["position"]:
+                            print("Ve vedlejší mísnosti byl nepřítel, kterého jsi přilákal sem. Dobrá práce! Teď víš, kde je! Tady...")
+                            enemy["position"] = player["position"]
+                            fight = 1
+                        else:
+                            print("Nic se nestalo.")
+                        invent_state[ref_index] += -1
             if invent_state[ref_index] == 0:
                 invent_state.remove(invent_state[ref_index])
                 inventory.remove(ref_thing)
             ref_index = 0
+        elif ref_thing.lower() == "Klíč" and player["position"] == safe_position and not player["unlocked_safe"]:
+            print("Odemknul jsi safe. Našel jsi v něm mapu základny a ověřovací kartu pro vojáka.")
+            print("Ověřovací karta pro vojáka slouží k prokázání vojákovy přítomnosti na stráži.")
+            print("Východ se nachází v mísnosti č.",exit_position)
+            player["unlocked_safe"] = 1
         ref_thing = "Nichts"
     print("--------------------------------------------------------") # testing
     print(fight,fight2,noise,enemy["position"],enemy["lives"],safe_position)
     # enemyho akce
     # pravidla pohybu: 1) enemy se pohne o jedno pole v oblasti 3-6; 2) v boji se nehne; 3) při zapískání GK se 1. kolo nehne, 2. jde na místo pískání; 4) pokud enemy vleze sám do boje mimo účinky GK, randint rozhoduje, kdo útočí první
-    if noise == 1: # GK píská a player je v sousední roomce
+    if noise == 1: # GK píská a player je v sopoužítdní roomce
         # do nothing
         noise = 2
         direction = player["position"]
@@ -234,6 +243,7 @@ while True:
                 print("Nepřítel utekl do místnosti",enemy["position"])
                 fight = 0
             enemy["lives"] += -randint(0,1+(int((enemy["lives"]-1)/enemy["lives"] + 0.9))) # pro životy = 1 -> randint(0,1); pro živ. = 2+ -> randint(0,2)
+            enemy["lives"] += -(fight - 1)
     fight2 = 1
     print(fight,fight2,noise,enemy["position"],enemy["lives"],enemy["key_holder"]) #testing#
     if enemy["lives"] == 0:
