@@ -1,6 +1,6 @@
 # Cíl hry:
 Cílem hry je dostat se z komplexu 7 místností, označených 0-6, ven. Venek je znázorněn jako místnost č. 7, která je pro začátek hráči skryta.
-Plánek uspořádání místností a jejich propojení je v souboru [a relative link](plan.png)
+Plánek uspořádání místností a jejich propojení je v souboru [plan.png](plan.png)
 Východ ven se nachází v jedné z místností 3,5 nebo 6. Hráč se tuto informaci doví po otevření sejfu. K otevření sejfu je potřeba klíč, který má u sebe nepřítel.
 # Nepřátelé
 Nepřátelský voják se pohybuje v místnostech 3-6, ve speciálních situacích může z trasy vyjít (např. při útěku nebo při jiné hráčově akci).
