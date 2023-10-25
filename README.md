@@ -23,4 +23,8 @@ Mimo boj:
     Inventory - Prohledání počtu zvolené věci z inventáře. Na rozdíl od ostatních příkazů se tento nepočítá jako plnohodnotná akce, a proto lze po tomto provést další akci. Inventory lze použít i v boji.
     Dobít - V místnosti 4 si lze dobít baterku na 100 %.
 V boji:
-    
+    Útoč - Zaútočíš na nepřítele. Pokud má v inventáři pistoli a zadáš 'pistole', využiješ pistole k boji.
+    Uteč - Utečeš z boje, ale je tu možnost, že se zraníš.
+Po tvojí akci provede svoji nepřítel
+# Tipy
+Dávej pozor, když píšeš. Při překlepu se může stát, že díky tomu nic neuděláš a akce je ztracená.
