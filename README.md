@@ -14,17 +14,23 @@ Během boje se ti nevybíjí baterka (viz # Baterka)
 Všude je tma, proto si musíš svítit. Na začátku ji máš nabitou na 100 %, ale každý tah se vybije o 20 %. Při 40 % dostaneš upozornění.
 Při vybití na 0 % jsi prohrál.
 Dobít ji lze v místnosti 4 samostatnou akcí.
-# Akce
-Mimo boj:
-    Pohyb - Přesun hráče mezi místnostmi, po příchodu do nové místnosti zde najdeš předmět
-    Zvedni - Předmět v místnosti, který jsi nesebral můžeš takto přidat do svého inventáře. Nebývá vždy jen jeden
-    Použít - Věci ze svého inventáře můžeš použít. Obvaz ti přidá jeden život, gumová kačenka může mít... zajímavé účinky a klíčem lze odemknout sejf.
-    Odemkni - Stejný účinek jako akce Použít a zvolení Klíče
-    Inventory - Prohledání počtu zvolené věci z inventáře. Na rozdíl od ostatních příkazů se tento nepočítá jako plnohodnotná akce, a proto lze po tomto provést další akci. Inventory lze použít i v boji.
-    Dobít - V místnosti 4 si lze dobít baterku na 100 %.
-V boji:
-    Útoč - Zaútočíš na nepřítele. Pokud má v inventáři pistoli a zadáš 'pistole', využiješ pistole k boji.
-    Uteč - Utečeš z boje, ale je tu možnost, že se zraníš.
+# Seznam akcí:
+Inventory;   
+Mimo boj: Pohyb, Zvedni, Použít, Odemkni, Dobít;   
+V boji: Útoč, Uteč
+# Popis akcí
+Inventory - Prohledání počtu zvolené věci z inventáře. Na rozdíl od ostatních příkazů se tento nepočítá jako plnohodnotná akce, a proto lze po tomto provést další akci. Inventory lze použít i v boji.;   
+   
+Mimo boj:   
+    Pohyb - Přesun hráče mezi místnostmi, po příchodu do nové místnosti zde najdeš předmět;   
+    Zvedni - Předmět v místnosti, který jsi nesebral můžeš takto přidat do svého inventáře. Nebývá vždy jen jeden;   
+    Použít - Věci ze svého inventáře můžeš použít. Obvaz ti přidá jeden život, gumová kačenka může mít... zajímavé účinky a klíčem lze odemknout sejf.;   
+    Odemkni - Stejný účinek jako akce Použít a zvolení Klíče;   
+    Dobít - V místnosti 4 si lze dobít baterku na 100 %.;   
+   
+V boji:   
+    Útoč - Zaútočíš na nepřítele. Pokud má v inventáři pistoli a zadáš 'pistole', využiješ pistole k boji.;   
+    Uteč - Utečeš z boje, ale je tu možnost, že se zraníš.;   
 Po tvojí akci provede svoji nepřítel
 # Tipy
 Dávej pozor, když píšeš. Při překlepu se může stát, že díky tomu nic neuděláš a akce je ztracená.
